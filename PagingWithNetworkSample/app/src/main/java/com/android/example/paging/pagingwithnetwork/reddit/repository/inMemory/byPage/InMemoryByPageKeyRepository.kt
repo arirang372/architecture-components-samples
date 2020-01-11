@@ -19,8 +19,8 @@ package com.android.example.paging.pagingwithnetwork.reddit.repository.inMemory.
 import androidx.annotation.MainThread
 import androidx.lifecycle.Transformations.switchMap
 import androidx.lifecycle.asLiveData
-import androidx.paging.PagedDataFlowBuilder
 import androidx.paging.PagingConfig
+import androidx.paging.PagingDataFlow
 import com.android.example.paging.pagingwithnetwork.reddit.api.RedditApi
 import com.android.example.paging.pagingwithnetwork.reddit.repository.Listing
 import com.android.example.paging.pagingwithnetwork.reddit.repository.RedditPostRepository
@@ -46,10 +46,10 @@ class InMemoryByPageKeyRepository(
 
         val refreshState = switchMap(sourceFactory.sourceLiveData) { it.initialLoad }
 
-        val pagedDataFlow = PagedDataFlowBuilder(
-                pagedSourceFactory = sourceFactory,
-                config = PagingConfig(pageSize = pageSize)
-        ).build()
+        val pagedDataFlow = LivePagingData(
+                config = PagingConfig(pageSize = pageSize),
+                pagingSourceFactory = sourceFactory
+        )
 
         return Listing(
                 pagedData = pagedDataFlow.asLiveData(),
